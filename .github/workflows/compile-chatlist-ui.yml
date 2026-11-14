@@ -38,7 +38,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 build-system/Make/Make.py \
-            --bazelArguments="--apple_platform_type=ios --cpu=ios_sim_arm64 --platforms=@build_bazel_apple_support//platforms:ios_sim_arm64 --@build_bazel_rules_swift//swift:copt=-Wwarning --@build_bazel_rules_swift//swift:copt=DeprecatedDeclaration" \
+            --bazelArguments="--apple_platform_type=ios --cpu=ios_sim_arm64 --platforms=@build_bazel_apple_support//platforms:ios_sim_arm64" \
             build \
             --buildNumber=10000 \
             --configuration=debug_sim_arm64 \
