@@ -285,11 +285,11 @@ genrule(
 
         # Bazel stages repository files without preserving executable bits.
         # Restore only the FFmpeg scripts that are executed by the build.
-        chmod u+x "$SOURCE_PATH/ffmpeg-8.1.2/configure"
-        chmod u+x "$SOURCE_PATH/gas-preprocessor.pl" "$SOURCE_PATH/pkg-config"
-        find "$SOURCE_PATH" -type f -name "*.sh" -exec chmod u+x {} +
-        find "$SOURCE_PATH" -type f -name "*.pl" -exec chmod u+x {} +
-        bash "$SOURCE_PATH/build-ffmpeg-bazel.sh" "$VARIANT" "$BUILD_ARCH" "$BUILD_DIR" "$SOURCE_PATH" "$FFMPEG_VERSION"
+        chmod u+x "$$SOURCE_PATH/ffmpeg-8.1.2/configure"
+        chmod u+x "$$SOURCE_PATH/gas-preprocessor.pl" "$$SOURCE_PATH/pkg-config"
+        find "$$SOURCE_PATH" -type f -name "*.sh" -exec chmod u+x {} +
+        find "$$SOURCE_PATH" -type f -name "*.pl" -exec chmod u+x {} +
+        bash "$$SOURCE_PATH/build-ffmpeg-bazel.sh" "$$VARIANT" "$$BUILD_ARCH" "$$BUILD_DIR" "$$SOURCE_PATH" "$$FFMPEG_VERSION"
     """ + "\n" + "\n".join([
         "cp \"$$BUILD_DIR/FFmpeg-iOS/include/{header_path}\" \"$(location Public/third_party/ffmpeg/{header_path})\"".format(header_path = header_path) for header_path in ffmpeg_header_paths
     ]) + "\n" + "\n".join([
