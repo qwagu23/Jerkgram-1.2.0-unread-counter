@@ -28,11 +28,28 @@ jobs:
           xcodebuild -version
           python3 --version
 
-      - name: Compile ChatListUI using the project's build wrapper
+      - name: Compile ChatListUI and repair dependency script permissions if needed
+        shell: bash
         run: |
+          set +e
           python3 build-system/Make/Make.py build \
             --buildNumber=10000 \
             --configuration=debug_sim_arm64 \
             --configurationPath=build-system/template_minimal_development_configuration.json \
             --xcodeManagedCodesigning \
             --target=//submodules/ChatListUI:ChatListUI
+          build_status=$?
+
+          if [ "$build_status" -ne 0 ]; then
+            echo "Initial build failed; checking Apple support script permissions."
+            find "$HOME/Library/Caches/bazel" -type f -path '*/apple_support+/crosstool/generate-modulemap.sh' -exec chmod u+x {} \; 2>/dev/null
+            find "$HOME/.cache/bazel" -type f -path '*/apple_support+/crosstool/generate-modulemap.sh' -exec chmod u+x {} \; 2>/dev/null
+            echo "Retrying the same build after permission repair."
+            python3 build-system/Make/Make.py build \
+              --buildNumber=10000 \
+              --configuration=debug_sim_arm64 \
+              --configurationPath=build-system/template_minimal_development_configuration.json \
+              --xcodeManagedCodesigning \
+              --target=//submodules/ChatListUI:ChatListUI
+            exit $?
+          fi
