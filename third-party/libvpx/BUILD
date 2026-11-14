@@ -84,10 +84,10 @@ genrule(
     # Bazel preserves libvpx helper scripts without executable permissions.
     # Restore them in the isolated build copy before configure/make invokes them.
     chmod u+x "$$BUILD_DIR/libvpx/configure"
-    find "$BUILD_DIR/libvpx" -type f -name "*.sh" -exec chmod u+x {} +
-    find "$BUILD_DIR/libvpx" -type f -name "*.pl" -exec chmod u+x {} +
 
     pushd "$$BUILD_DIR/libvpx"
+    find . -type f -name "*.sh" -exec chmod u+x {} +
+    find . -type f -name "*.pl" -exec chmod u+x {} +
     patch -p1 < ../0001-Support-arm64-simulator.patch
     popd
 
