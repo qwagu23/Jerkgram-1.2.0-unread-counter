@@ -23,14 +23,16 @@ jobs:
         with:
           submodules: false
 
-      - name: Select the project's Xcode version
+      - name: Check Xcode version
         run: |
-          sudo xcode-select --switch /Applications/Xcode_27.1.app/Contents/Developer
           xcodebuild -version
+          python3 --version
 
-      - name: Compile ChatListUI
-        env:
-          USE_BAZEL_VERSION: 9.2.0
+      - name: Compile ChatListUI using the project's build wrapper
         run: |
-          bazelisk --version
-          bazelisk build //submodules/ChatListUI:ChatListUI --verbose_failures
+          python3 build-system/Make/Make.py build \
+            --buildNumber=10000 \
+            --configuration=debug_sim_arm64 \
+            --configurationPath=build-system/template_minimal_development_configuration.json \
+            --xcodeManagedCodesigning \
+            --target=//submodules/ChatListUI:ChatListUI
