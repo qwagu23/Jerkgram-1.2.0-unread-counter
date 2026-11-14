@@ -1,0 +1,23 @@
+
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "pffft",
+    hdrs = [
+        "third_party/pffft/src/pffft.h",
+        "third_party/pffft/src/fftpack.h",
+    ],
+    srcs = [
+        "third_party/pffft/src/fftpack.c",
+        "third_party/pffft/src/pffft.c",
+    ],
+
+    deps = [
+    ],
+    copts = [
+    ],
+    includes = [
+        ".",
+    ],
+    visibility = ["//visibility:public"],
+)
