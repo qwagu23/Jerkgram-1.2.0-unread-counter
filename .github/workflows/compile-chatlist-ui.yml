@@ -1,0 +1,36 @@
+name: Compile unread-count changes
+
+on:
+  push:
+    branches:
+      - feature/unread-all-tab-badge
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile-chatlist-ui:
+    name: Compile ChatListUI on macOS
+    runs-on: xcode-27
+    timeout-minutes: 120
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Select the project's Xcode version
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_27.1.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Compile ChatListUI
+        env:
+          USE_BAZEL_VERSION: 9.2.0
+        run: |
+          bazelisk --version
+          bazelisk build //submodules/ChatListUI:ChatListUI --verbose_failures
