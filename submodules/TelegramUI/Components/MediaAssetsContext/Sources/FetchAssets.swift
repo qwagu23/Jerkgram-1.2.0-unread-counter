@@ -6,7 +6,6 @@ import SwiftSignalKit
 
 private let imageManager: PHCachingImageManager = {
     let imageManager = PHCachingImageManager()
-    imageManager.allowsCachingHighQualityImages = false
     return imageManager
 }()
 
