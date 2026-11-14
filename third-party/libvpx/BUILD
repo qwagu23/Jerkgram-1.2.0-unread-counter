@@ -79,7 +79,7 @@ genrule(
 
     SOURCE_PATH="third-party/libvpx/libvpx"
 
-    cp -R "$SOURCE_PATH" "$BUILD_DIR/"
+    cp -R "third-party/libvpx/libvpx" "$$BUILD_DIR/"
 
     # Bazel preserves libvpx helper scripts without executable permissions.
     # Restore them in the isolated build copy before configure/make invokes them.
