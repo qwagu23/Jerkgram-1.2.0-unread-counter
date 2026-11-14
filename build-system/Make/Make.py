@@ -320,6 +320,8 @@ class BazelCommandLine:
             ]
 
         combined_arguments += self.configuration_args
+        if self.additional_args:
+            combined_arguments += self.additional_args
         if self.profile_swift:
             combined_arguments += ['--config=swift_profile']
 
@@ -632,6 +634,9 @@ def build(bazel, arguments):
         arguments=arguments,
         additional_codesigning_output_path=None
     )
+
+    if arguments.bazelArguments:
+        bazel_command_line.add_additional_args(shlex.split(arguments.bazelArguments))
 
     bazel_command_line.set_configuration(arguments.configuration)
     if arguments.embedWatchApp:
