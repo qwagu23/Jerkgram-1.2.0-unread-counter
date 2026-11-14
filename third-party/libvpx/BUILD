@@ -79,7 +79,13 @@ genrule(
 
     SOURCE_PATH="third-party/libvpx/libvpx"
 
-    cp -R "$$SOURCE_PATH" "$$BUILD_DIR/"
+    cp -R "$SOURCE_PATH" "$BUILD_DIR/"
+
+    # Bazel preserves libvpx helper scripts without executable permissions.
+    # Restore them in the isolated build copy before configure/make invokes them.
+    chmod u+x "$BUILD_DIR/libvpx/configure"
+    find "$BUILD_DIR/libvpx" -type f \\( -name "*.sh" -o -name "*.pl" \\) -exec chmod u+x {} \\;
+
 
     pushd "$$BUILD_DIR/libvpx"
     patch -p1 < ../0001-Support-arm64-simulator.patch
