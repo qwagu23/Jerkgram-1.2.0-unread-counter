@@ -13,7 +13,7 @@ import UIKit
 /// InstantPage V1/V2 collage, media picker, audio preview), and reading `UIScreen.main` off-main on
 /// every call is both a Main Thread Checker violation and unnecessary per-call cost.
 #if canImport(UIKit)
-private let mosaicScreenScale: CGFloat = UIScreen.main.scale
+private let mosaicScreenScale: CGFloat = UITraitCollection.current.displayScale
 #else
 private let mosaicScreenScale: CGFloat = 2.0
 #endif
