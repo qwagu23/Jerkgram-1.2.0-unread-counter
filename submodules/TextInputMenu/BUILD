@@ -8,6 +8,8 @@ swift_library(
     ]),
     copts = [
         "-warnings-as-errors",
+        "-Wwarning",
+        "DeprecatedDeclaration",
     ],
     deps = [
         "//submodules/TelegramPresentationData:TelegramPresentationData",
