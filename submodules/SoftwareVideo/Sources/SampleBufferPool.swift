@@ -51,16 +51,17 @@ public func takeSampleBufferLayer() -> SampleBufferLayer {
     }
     return SampleBufferLayer(layer: layer!, enqueue: { layer in
         Queue.mainQueue().async {
-            layer.flushAndRemoveImage()
-            layer.setAffineTransform(CGAffineTransform.identity)
-            #if targetEnvironment(simulator)
-            #else
-            let _ = pool.modify { list in
-                var list = list
-                list.append(layer)
-                return list
-            }
-            #endif
+            layer.sampleBufferRenderer.flush(removingDisplayedImage: true, completionHandler: {
+                layer.setAffineTransform(CGAffineTransform.identity)
+                #if targetEnvironment(simulator)
+                #else
+                let _ = pool.modify { list in
+                    var list = list
+                    list.append(layer)
+                    return list
+                }
+                #endif
+            })
         }
     })
 }
