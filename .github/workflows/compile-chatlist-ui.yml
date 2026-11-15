@@ -41,6 +41,7 @@ jobs:
           python3 --version
           simulator_sdk_path="$(xcrun --sdk iphonesimulator --show-sdk-path)"
           echo "iOS Simulator SDK: $simulator_sdk_path"
+          [[ "$simulator_sdk_path" == *iPhoneSimulator27.2.sdk ]]
           test -d "$simulator_sdk_path/System/Library/Frameworks/UIKit.framework"
 
       - name: Compile ChatListUI for iOS Simulator
