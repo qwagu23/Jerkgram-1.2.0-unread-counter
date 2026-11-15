@@ -150,7 +150,7 @@ final class PrivateCallPictureInPictureView: UIView {
         }
         
         if let sampleBuffer = sampleBufferFromPixelBuffer(pixelBuffer: pixelBuffer) {
-            (self.sampleBufferView.layer as? AVSampleBufferDisplayLayer)?.enqueue(sampleBuffer)
+            (self.sampleBufferView.layer as? AVSampleBufferDisplayLayer)?.sampleBufferRenderer.enqueue(sampleBuffer)
         }
     }
     
