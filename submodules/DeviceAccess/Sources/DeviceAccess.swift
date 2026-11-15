@@ -71,7 +71,7 @@ private func isMicrophoneRecordPermissionGranted() -> Bool {
     if #available(iOS 17.0, *) {
         return AVAudioApplication.shared.recordPermission == .granted
     } else {
-        return isMicrophoneRecordPermissionGranted()
+        return AVAudioSession.sharedInstance().recordPermission == .granted
     }
 }
 
