@@ -181,47 +181,47 @@ public final class FileVideoSource: VideoSource {
             rotationAngle = Float.pi * 3.0 / 2.0
         }
         
-        var pixelBuffer: CVPixelBuffer?
-        pixelBuffer = self.videoOutput.copyPixelBuffer(forItemTime: currentTime, itemTimeForDisplay: nil)
-        
-        guard let buffer = pixelBuffer else {
+        let (readOnlyPixelBuffer, _) = self.videoOutput.pixelBufferAndDisplayTime(forItemTime: currentTime)
+        guard let readOnlyPixelBuffer else {
             return false
         }
         
-        let width = CVPixelBufferGetWidth(buffer)
-        let height = CVPixelBufferGetHeight(buffer)
-        
-        var cvMetalTextureY: CVMetalTexture?
-        var status = CVMetalTextureCacheCreateTextureFromImage(nil, self.textureCache!, buffer, nil, .r8Unorm, width, height, 0, &cvMetalTextureY)
-        guard status == kCVReturnSuccess, let yTexture = CVMetalTextureGetTexture(cvMetalTextureY!) else {
-            return false
+        return readOnlyPixelBuffer.withUnsafeBuffer { buffer in
+            let width = CVPixelBufferGetWidth(buffer)
+            let height = CVPixelBufferGetHeight(buffer)
+            
+            var cvMetalTextureY: CVMetalTexture?
+            var status = CVMetalTextureCacheCreateTextureFromImage(nil, self.textureCache!, buffer, nil, .r8Unorm, width, height, 0, &cvMetalTextureY)
+            guard status == kCVReturnSuccess, let cvMetalTextureY, let yTexture = CVMetalTextureGetTexture(cvMetalTextureY) else {
+                return false
+            }
+            var cvMetalTextureUV: CVMetalTexture?
+            status = CVMetalTextureCacheCreateTextureFromImage(nil, self.textureCache!, buffer, nil, .rg8Unorm, width / 2, height / 2, 1, &cvMetalTextureUV)
+            guard status == kCVReturnSuccess, let cvMetalTextureUV, let uvTexture = CVMetalTextureGetTexture(cvMetalTextureUV) else {
+                return false
+            }
+            
+            if let fixedRotationAngle = self.fixedRotationAngle {
+                rotationAngle = fixedRotationAngle
+            }
+            
+            var resolution = CGSize(width: CGFloat(yTexture.width), height: CGFloat(yTexture.height))
+            resolution.width = floor(resolution.width * self.sizeMultiplicator.x)
+            resolution.height = floor(resolution.height * self.sizeMultiplicator.y)
+            
+            self.currentOutput = Output(
+                resolution: resolution,
+                textureLayout: .biPlanar(Output.BiPlanarTextureLayout(
+                    y: yTexture,
+                    uv: uvTexture
+                )),
+                dataBuffer: Output.NativeDataBuffer(pixelBuffer: buffer),
+                rotationAngle: rotationAngle,
+                followsDeviceOrientation: false,
+                mirrorDirection: [],
+                sourceId: self.sourceId
+            )
+            return true
         }
-        var cvMetalTextureUV: CVMetalTexture?
-        status = CVMetalTextureCacheCreateTextureFromImage(nil, self.textureCache!, buffer, nil, .rg8Unorm, width / 2, height / 2, 1, &cvMetalTextureUV)
-        guard status == kCVReturnSuccess, let uvTexture = CVMetalTextureGetTexture(cvMetalTextureUV!) else {
-            return false
-        }
-        
-        if let fixedRotationAngle = self.fixedRotationAngle {
-            rotationAngle = fixedRotationAngle
-        }
-        
-        var resolution = CGSize(width: CGFloat(yTexture.width), height: CGFloat(yTexture.height))
-        resolution.width = floor(resolution.width * self.sizeMultiplicator.x)
-        resolution.height = floor(resolution.height * self.sizeMultiplicator.y)
-        
-        self.currentOutput = Output(
-            resolution: resolution,
-            textureLayout: .biPlanar(Output.BiPlanarTextureLayout(
-                y: yTexture,
-                uv: uvTexture
-            )),
-            dataBuffer: Output.NativeDataBuffer(pixelBuffer: buffer),
-            rotationAngle: rotationAngle,
-            followsDeviceOrientation: false,
-            mirrorDirection: [],
-            sourceId: self.sourceId
-        )
-        return true
     }
 }
