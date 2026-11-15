@@ -23,11 +23,21 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Select Xcode 27.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcode_path="/Applications/Xcode_27.2.app/Contents/Developer"
+          test -d "$xcode_path"
+          sudo xcode-select --switch "$xcode_path"
+          xcode-select -p
+
       - name: Check Xcode and iOS Simulator SDK
         shell: bash
         run: |
           set -euo pipefail
           xcodebuild -version
+          xcodebuild -version | grep -F "Xcode 27.2"
           python3 --version
           simulator_sdk_path="$(xcrun --sdk iphonesimulator --show-sdk-path)"
           echo "iOS Simulator SDK: $simulator_sdk_path"
