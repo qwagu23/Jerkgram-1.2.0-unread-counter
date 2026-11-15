@@ -155,7 +155,7 @@ final class PrivateCallPictureInPictureView: UIView {
         }
         
         if let sampleBuffer = sampleBufferFromPixelBuffer(pixelBuffer: pixelBuffer) {
-            self.sampleBufferReceiver?.enqueueImmediately(CMReadySampleBuffer(unsafeBuffer: sampleBuffer))
+            _ = self.sampleBufferReceiver?.enqueueImmediately(CMReadySampleBuffer(unsafeBuffer: sampleBuffer))
         }
     }
     
