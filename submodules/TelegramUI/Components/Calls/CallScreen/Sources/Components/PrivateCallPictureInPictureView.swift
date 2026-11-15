@@ -75,6 +75,8 @@ final class PrivateCallPictureInPictureView: UIView {
     
     private let videoContainerView: UIView
     private let sampleBufferView: SampleBufferView
+    private let sampleBufferRenderSynchronizer = AVSampleBufferRenderSynchronizer()
+    private var sampleBufferReceiver: AVSampleBufferVideoRenderer.Receiver?
     
     private var videoMetrics: VideoContainerView.VideoMetrics?
     private var videoDisposable: Disposable?
@@ -130,6 +132,9 @@ final class PrivateCallPictureInPictureView: UIView {
         
         self.videoContainerView.addSubview(self.sampleBufferView)
         self.addSubview(self.videoContainerView)
+        if let displayLayer = self.sampleBufferView.layer as? AVSampleBufferDisplayLayer {
+            self.sampleBufferReceiver = self.sampleBufferRenderSynchronizer.sampleBufferReceiver(adding: displayLayer.sampleBufferRenderer)
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -150,7 +155,7 @@ final class PrivateCallPictureInPictureView: UIView {
         }
         
         if let sampleBuffer = sampleBufferFromPixelBuffer(pixelBuffer: pixelBuffer) {
-            (self.sampleBufferView.layer as? AVSampleBufferDisplayLayer)?.enqueue(sampleBuffer)
+            _ = self.sampleBufferReceiver?.enqueueImmediately(CMReadySampleBuffer(unsafeBuffer: sampleBuffer))
         }
     }
     

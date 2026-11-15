@@ -8,18 +8,24 @@ public enum ScreenCaptureEvent {
 }
 
 private final class ScreenRecordingObserver: NSObject {
+    let screens: [UIScreen]
     let f: (Bool) -> Void
     
-    init(_ f: @escaping (Bool) -> Void) {
+    init(_ screens: [UIScreen], _ f: @escaping (Bool) -> Void) {
+        self.screens = screens
         self.f = f
         
         super.init()
         
-        UIScreen.main.addObserver(self, forKeyPath: "captured", options: [.new], context: nil)
+        for screen in screens {
+            screen.addObserver(self, forKeyPath: "captured", options: [.new], context: nil)
+        }
     }
     
     func clear() {
-        UIScreen.main.removeObserver(self, forKeyPath: "captured")
+        for screen in screens {
+            screen.removeObserver(self, forKeyPath: "captured")
+        }
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -34,14 +40,30 @@ private final class ScreenRecordingObserver: NSObject {
 private func screenRecordingActive() -> Signal<Bool, NoError> {
     return Signal { subscriber in
         if #available(iOSApplicationExtension 11.0, iOS 11.0, *) {
-            subscriber.putNext(UIScreen.main.isCaptured)
-            let observer = ScreenRecordingObserver({ value in
-                subscriber.putNext(value)
-            })
-            return ActionDisposable {
-                Queue.mainQueue().async {
-                    observer.clear()
+            if #available(iOS 13.0, *) {
+                var seenScreens = Set<ObjectIdentifier>()
+                let screens = UIApplication.shared.connectedScenes
+                    .compactMap { $0 as? UIWindowScene }
+                    .map(\.screen)
+                    .filter { seenScreens.insert(ObjectIdentifier($0)).inserted }
+                
+                guard !screens.isEmpty else {
+                    subscriber.putNext(false)
+                    return EmptyDisposable
                 }
+                
+                subscriber.putNext(screens.contains(where: \.isCaptured))
+                let observer = ScreenRecordingObserver(screens, { _ in
+                    subscriber.putNext(screens.contains(where: \.isCaptured))
+                })
+                return ActionDisposable {
+                    Queue.mainQueue().async {
+                        observer.clear()
+                    }
+                }
+            } else {
+                subscriber.putNext(false)
+                return EmptyDisposable
             }
         } else {
             subscriber.putNext(false)

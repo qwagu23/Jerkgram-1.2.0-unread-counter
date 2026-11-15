@@ -158,7 +158,16 @@ public func chatListFilterItems(context: AccountContext, filters: Signal<[ChatLi
                 }
             }
             
-            let totalBadge = 0
+            // The All tab represents the root chat list (the Archive is separate).
+            // Count unread chats across every category, including muted chats.
+            let totalBadge: Int
+            if let totalState = totalStates[.root] {
+                totalBadge = totalState.absoluteCounters.values.reduce(0) { count, value in
+                    count + Int(value.chatCount)
+                }
+            } else {
+                totalBadge = 0
+            }
             
             for filter in filters {
                 var count = 0

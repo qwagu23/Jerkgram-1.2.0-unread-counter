@@ -105,7 +105,7 @@ public final class PeerInfoNavigationItems {
             item = UIBarButtonItem(title: "___close", style: .plain, target: nil, action: nil)
             item.accessibilityLabel = resources.cancel
         case .done, .selectionDone:
-            item = UIBarButtonItem(title: "___done", style: .done, target: nil, action: nil)
+            item = UIBarButtonItem(title: "___done", style: .prominent, target: nil, action: nil)
             item.accessibilityLabel = resources.done
             // iPhone Duo: in the row, where the Edit it replaces is (a text button, `peerInfoNavigationButtonIsIcon`).
             item.staysInRow = true

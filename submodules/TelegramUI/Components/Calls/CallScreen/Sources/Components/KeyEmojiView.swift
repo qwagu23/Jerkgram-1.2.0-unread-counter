@@ -141,7 +141,10 @@ func generateParabollicMotionKeyframes(from sourcePoint: CGPoint, to targetPosit
     let x3 = targetPosition.x
     let y3 = targetPosition.y
     
-    let numPoints: Int = Int(ceil(Double(UIScreen.main.maximumFramesPerSecond) * duration))
+    let maximumFramesPerSecond = UIApplication.shared.connectedScenes
+        .compactMap { ($0 as? UIWindowScene)?.screen.maximumFramesPerSecond }
+        .max() ?? 60
+    let numPoints: Int = Int(ceil(Double(maximumFramesPerSecond) * duration))
     
     var keyframes: [CGPoint] = []
     if abs(y1 - y3) < 5.0 || abs(x1 - x3) < 5.0 {
