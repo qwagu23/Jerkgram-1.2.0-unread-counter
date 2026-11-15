@@ -107,7 +107,7 @@ private func lensMoveCurve(_ animation: ComponentTransition.Animation) -> (durat
 }
 
 /// Keyframes a frame apart, played from `beginTime` at the speed Display plays its animations at.
-private func makeLensKeyframeAnimation(keyPath: String, values: [Any], times: [Double], duration: Double, beginTime: Double, timeScale: Double) -> CAKeyframeAnimation {
+private func makeLensKeyframeAnimation(keyPath: String, values: [Any], times: [Double], duration: Double, beginTime: Double, timeScale: Double, maximumFramesPerSecond: Int?) -> CAKeyframeAnimation {
     let animation = CAKeyframeAnimation(keyPath: keyPath)
     animation.values = values
     animation.keyTimes = times.map { NSNumber(value: min(1.0, max(0.0, $0 / duration))) }
@@ -117,8 +117,8 @@ private func makeLensKeyframeAnimation(keyPath: String, values: [Any], times: [D
     animation.speed = Float(1.0 / timeScale)
     animation.fillMode = .both
     animation.isRemovedOnCompletion = true
-    if #available(iOS 15.0, *) {
-        let maxFps = Float(UIScreen.main.maximumFramesPerSecond)
+    if #available(iOS 15.0, *), let maximumFramesPerSecond {
+        let maxFps = Float(maximumFramesPerSecond)
         if maxFps > 61.0 {
             animation.preferredFrameRateRange = CAFrameRateRange(minimum: 30.0, maximum: maxFps, preferred: maxFps)
         }
@@ -716,14 +716,14 @@ public final class LiquidLensView: UIView {
             let beginTime = layer.convertTime(plan.startTime * timeScale, from: nil)
 
             if positionKeyframes.count > 1, let duration = positionKeyframes.last?.time, duration > 0.0 {
-                let animation = makeLensKeyframeAnimation(keyPath: "position", values: positionKeyframes.map { NSValue(cgPoint: $0.position) }, times: positionKeyframes.map { $0.time }, duration: duration, beginTime: beginTime, timeScale: timeScale)
+                let animation = makeLensKeyframeAnimation(keyPath: "position", values: positionKeyframes.map { NSValue(cgPoint: $0.position) }, times: positionKeyframes.map { $0.time }, duration: duration, beginTime: beginTime, timeScale: timeScale, maximumFramesPerSecond: self.window?.windowScene?.screen.maximumFramesPerSecond)
                 layer.add(animation, forKey: "liquidLensPosition")
             } else {
                 layer.removeAnimation(forKey: "liquidLensPosition")
             }
 
             if plan.hasFlex, plan.endTime > plan.startTime {
-                let animation = makeLensKeyframeAnimation(keyPath: "transform", values: plan.states.map { NSValue(caTransform3D: $0.animator.flex.transform) }, times: plan.states.map { $0.time - plan.startTime }, duration: plan.endTime - plan.startTime, beginTime: beginTime, timeScale: timeScale)
+                let animation = makeLensKeyframeAnimation(keyPath: "transform", values: plan.states.map { NSValue(caTransform3D: $0.animator.flex.transform) }, times: plan.states.map { $0.time - plan.startTime }, duration: plan.endTime - plan.startTime, beginTime: beginTime, timeScale: timeScale, maximumFramesPerSecond: self.window?.windowScene?.screen.maximumFramesPerSecond)
                 layer.add(animation, forKey: "liquidLensFlex")
             } else {
                 layer.removeAnimation(forKey: "liquidLensFlex")
