@@ -16,17 +16,17 @@ private final class SampleBufferLayerImpl: AVSampleBufferDisplayLayer {
 
 public final class SampleBufferLayer {
     public let layer: AVSampleBufferDisplayLayer
-    private let enqueue: (AVSampleBufferDisplayLayer) -> Void
+    private let enqueue: () -> Void
     
     public var isFreed: Bool = false
-    fileprivate init(layer: AVSampleBufferDisplayLayer, enqueue: @escaping (AVSampleBufferDisplayLayer) -> Void) {
+    fileprivate init(layer: AVSampleBufferDisplayLayer, enqueue: @escaping () -> Void) {
         self.layer = layer
         self.enqueue = enqueue
     }
     
     deinit {
         if !self.isFreed {
-            self.enqueue(self.layer)
+            self.enqueue()
         }
     }
 }
