@@ -253,7 +253,7 @@ private func addAssetIdentifierToJPEG(_ imageData: Data, assetIdentifier: String
 }
 
 private func addAssetIdentifierToVideo(inputURL: URL, outputURL: URL, assetIdentifier: String, completion: @escaping (Bool) -> Void) {
-    let asset = AVAsset(url: inputURL)
+    let asset = AVURLAsset(url: inputURL)
 
     guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetPassthrough) else {
         completion(false)
@@ -273,12 +273,15 @@ private func addAssetIdentifierToVideo(inputURL: URL, outputURL: URL, assetIdent
     stillImageTimeItem.value = 0 as (NSCopying & NSObjectProtocol)?
     stillImageTimeItem.dataType = "com.apple.metadata.datatype.int8"
 
-    exportSession.outputURL = outputURL
-    exportSession.outputFileType = .mov
     exportSession.metadata = [identifierItem, stillImageTimeItem]
     exportSession.shouldOptimizeForNetworkUse = true
 
-    exportSession.exportAsynchronously {
-        completion(exportSession.status == .completed)
+    Task {
+        do {
+            try await exportSession.export(to: outputURL, as: .mov)
+            completion(true)
+        } catch {
+            completion(false)
+        }
     }
 }
