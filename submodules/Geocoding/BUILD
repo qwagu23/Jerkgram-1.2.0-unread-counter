@@ -4,13 +4,15 @@ swift_library(
     name = "Geocoding",
     module_name = "Geocoding",
     srcs = glob([
-		"Sources/**/*.swift",
+        "Sources/**/*.swift",
     ]),
     copts = [
         "-warnings-as-errors",
+        "-Wwarning",
+        "DeprecatedDeclaration",
     ],
     deps = [
-	    "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",
+        "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",
     ],
     visibility = [
         "//visibility:public",

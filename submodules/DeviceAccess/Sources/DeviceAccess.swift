@@ -67,6 +67,22 @@ public func shouldDisplayNotificationsPermissionWarning(status: AccessType, supp
 // with CLLocationManager's threading guidance, so keep exactly one.
 private let sharedLocationAuthorizationManager = CLLocationManager()
 
+private func isMicrophoneRecordPermissionGranted() -> Bool {
+    if #available(iOS 17.0, *) {
+        return AVAudioApplication.shared.recordPermission == .granted
+    } else {
+        return AVAudioSession.sharedInstance().recordPermission == .granted
+    }
+}
+
+private func requestMicrophoneRecordPermission(_ completion: @escaping (Bool) -> Void) {
+    if #available(iOS 17.0, *) {
+        AVAudioApplication.requestRecordPermission(completionHandler: completion)
+    } else {
+        AVAudioSession.sharedInstance().requestRecordPermission(completion)
+    }
+}
+
 public final class DeviceAccess {
     private static let contactsPromise = Promise<Bool?>(nil)
     static var contacts: Signal<Bool?, NoError> {
@@ -100,7 +116,7 @@ public final class DeviceAccess {
     }
     
     public static func isMicrophoneAccessAuthorized() -> Bool? {
-        return AVAudioSession.sharedInstance().recordPermission == .granted
+        return isMicrophoneRecordPermissionGranted()
     }
     
     public static func isCameraAccessAuthorized() -> Bool {
@@ -380,10 +396,10 @@ public final class DeviceAccess {
                         completion(true)
                     }
                 case let .microphone(microphoneSubject):
-                    if AVAudioSession.sharedInstance().recordPermission == .granted {
+                    if isMicrophoneRecordPermissionGranted() {
                         completion(true)
                     } else {
-                        AVAudioSession.sharedInstance().requestRecordPermission({ granted in
+                        requestMicrophoneRecordPermission({ granted in
                             Queue.mainQueue().async {
                                 if granted {
                                     completion(true)

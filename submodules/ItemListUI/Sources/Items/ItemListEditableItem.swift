@@ -590,7 +590,7 @@ open class ItemListRevealOptionsItemNode: ListViewItemNode, ASGestureRecognizerD
         var revealSize = node.measure(CGSize(width: .greatestFiniteMagnitude, height: size.height))
         revealSize.width += sideInset
         node.bounds = CGRect(origin: .zero, size: revealSize)
-        self.motion.configure(node.motionParameters(width: size.width, sideInset: sideInset, displayScale: self.isNodeLoaded ? self.view.traitCollection.displayScale : UIScreen.main.scale))
+        self.motion.configure(node.motionParameters(width: size.width, sideInset: sideInset, displayScale: self.isNodeLoaded ? self.view.traitCollection.displayScale : UITraitCollection.current.displayScale))
     }
 
     public func updateLayout(size: CGSize, leftInset: CGFloat, rightInset: CGFloat) {

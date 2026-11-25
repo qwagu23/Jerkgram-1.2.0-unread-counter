@@ -4146,16 +4146,16 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
             let limits = snapshot.limits
             strongSelf.isPremium = isPremium ?? false
             
-            let (_, items) = countAndFilterItems
+            let (totalBadge, items) = countAndFilterItems
             var filterItems: [ChatListFilterTabEntry] = []
             
             for (filter, unreadCount, hasUnmutedUnread) in items {
                 switch filter {
                     case .allChats:
                         if let isPremium = isPremium, !isPremium && !snapshot.localActive && filterItems.count > 0 {
-                            filterItems.insert(.all(unreadCount: 0), at: 0)
+                            filterItems.insert(.all(unreadCount: totalBadge), at: 0)
                         } else {
-                            filterItems.append(.all(unreadCount: 0))
+                            filterItems.append(.all(unreadCount: totalBadge))
                         }
                     case let .filter(id, title, _, _):
                         filterItems.append(.filter(id: id, text: title, unread: ChatListFilterTabEntryUnreadCount(value: unreadCount, hasUnmuted: hasUnmutedUnread)))

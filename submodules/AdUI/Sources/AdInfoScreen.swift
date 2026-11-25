@@ -231,7 +231,7 @@ public final class AdInfoScreen: ViewController {
         self.navigationPresentation = .modal
 
         self.navigationItem.setLeftBarButton(UIBarButtonItem(title: "", style: .plain, target: self, action: #selector(self.noAction)), animated: false)
-        self.navigationItem.setRightBarButton(UIBarButtonItem(title: self.presentationData.strings.Common_Done, style: .done, target: self, action: #selector(self.donePressed)), animated: false)
+        self.navigationItem.setRightBarButton(UIBarButtonItem(title: self.presentationData.strings.Common_Done, style: .prominent, target: self, action: #selector(self.donePressed)), animated: false)
     }
 
     required init(coder aDecoder: NSCoder) {

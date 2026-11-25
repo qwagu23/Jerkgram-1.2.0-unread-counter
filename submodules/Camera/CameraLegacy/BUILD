@@ -8,6 +8,8 @@ swift_library(
     ]),
     copts = [
         "-warnings-as-errors",
+        "-Wwarning",
+        "DeprecatedDeclaration",
     ],
     data = [
         "//submodules/Camera:CameraBundle",

@@ -89,6 +89,7 @@ submodules/SettingsUI/Sources/Data and Storage/StorageUsageExceptionsScreen.swif
 submodules/SettingsUI/Sources/Data and Storage/WebBrowserDomainExceptionItem.swift
 submodules/SettingsUI/Sources/Data and Storage/WebBrowserSettingsController.swift
 submodules/SettingsUI/Sources/DeleteAccountDataController.swift
+submodules/SettingsUI/Sources/GhostBase/GhostBaseSettingsController.swift
 submodules/SettingsUI/Sources/Notifications/Exceptions/NotificationExceptionControllerNode.swift
 submodules/SettingsUI/Sources/Notifications/NotificationsAndSoundsController.swift
 submodules/SettingsUI/Sources/NotificationsPeerCategoryController.swift
@@ -170,6 +171,7 @@ submodules/TelegramUI/Components/MessageInputPanelComponent/Sources/InputContext
 submodules/TelegramUI/Components/MessageInputPanelComponent/Sources/MediaPreviewPanelComponent.swift
 submodules/TelegramUI/Components/MultiplexedVideoNode/Sources/SoftwareVideoThumbnailLayer.swift
 submodules/TelegramUI/Components/PeerInfo/PeerInfoCoverComponent/Sources/PeerInfoCoverComponent.swift
+submodules/TelegramUI/Components/PeerInfo/PeerInfoScreen/Sources/GhostBaseProfileFullscreenBackground.swift
 submodules/TelegramUI/Components/PeerInfo/PeerInfoScreen/Sources/Panes/PeerInfoGifPaneNode.swift
 submodules/TelegramUI/Components/PeerInfo/PeerInfoScreen/Sources/PeerInfoAvatarTransformContainerNode.swift
 submodules/TelegramUI/Components/PeerInfo/PeerInfoScreen/Sources/PeerInfoData.swift
@@ -212,6 +214,7 @@ submodules/TelegramUI/Sources/ChatControllerContentData.swift
 submodules/TelegramUI/Sources/ChatControllerNode.swift
 submodules/TelegramUI/Sources/ChatControllerOpenMessageShareMenu.swift
 submodules/TelegramUI/Sources/ChatHistoryListNode.swift
+submodules/TelegramUI/Sources/ChatHistoryViewForLocation.swift
 submodules/TelegramUI/Sources/ChatPinnedMessageTitlePanelNode.swift
 submodules/TelegramUI/Sources/CreateGroupController.swift
 submodules/TelegramUI/Sources/CreatePeerAvatarSetup.swift
