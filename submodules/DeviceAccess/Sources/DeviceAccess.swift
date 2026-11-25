@@ -116,7 +116,7 @@ public final class DeviceAccess {
     }
     
     public static func isMicrophoneAccessAuthorized() -> Bool? {
-        return AVAudioSession.sharedInstance().recordPermission == .granted
+        return isMicrophoneRecordPermissionGranted()
     }
     
     public static func isCameraAccessAuthorized() -> Bool {
